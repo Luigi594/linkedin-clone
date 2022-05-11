@@ -15,7 +15,6 @@ const firebaseConfig = {
 
 // get the configuration 
 const firebaseApp = initializeApp(firebaseConfig);
-console.log(firebaseApp.name);
 
 // get the db from firebase
 const db = getFirestore(firebaseApp);

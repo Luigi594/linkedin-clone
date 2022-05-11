@@ -8,7 +8,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import CalendarViewDayIcon from '@mui/icons-material/CalendarViewDay';
 import Post from './Post';
 import { db } from "./firebaseConfig";
-import { collection, addDoc, } from 'firebase/firestore';
+import { collection, addDoc, getDocs, serverTimestamp  } from 'firebase/firestore';
 
 function Feed() {
 
@@ -21,41 +21,38 @@ function Feed() {
 
         // a listenner to the db on the collection "posts"
         // to get all the data and set it to the posts hook
-        db.collection("posts").onSnapshot((snapshot) => {
+        const collectionRef = collection(db, "posts");
 
-            setPosts(
-                snapshot.docs.map((doc) => ({
-                    
+        // this is the way I found to read the data from firebase
+        getDocs(collectionRef)
+        .then((snapshot) => {
+            
+            setPosts(snapshot.docs.map((doc) => (
+
+                {
                     id: doc.id,
-                    data: doc.data(),
-                }))
-            )
-        });
+                    data: doc.data()
+                }
+            )))
+        })
     }, []);
 
     const sendPost = e => {
 
         // preventing the default behavior
         e.preventDefault();
-        
-        // adding a new post
-        /* db.collection("posts").add({
-
-            name: "Luis Martinez",
-            description: "This is a real test",
-            message: input,
-            photoUrl: "",
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        }); */
 
         try{
 
-            const docRef = addDoc(collection(db, "posts"), {
+            // adding a new document in my collection posts
+            addDoc(collection(db, "posts"), {
+
                 name: "Luis Martinez",
                 description: "This is a real test",
                 message: input,
                 photoUrl: "",
-            })
+                timestamp: serverTimestamp()
+            });
         }
         catch(e){
             console.log(e);
@@ -87,8 +84,11 @@ function Feed() {
           </div>          
       </div>
 
-      {/** Feed Posts */}
-      {posts.map(({id, data: { name, description, message, photoUrl} }) => (
+      {/** Feed Posts 
+       * 
+       * we destruct the data like this, it's easy to use them after
+      */}
+      {posts.map(({id, data: { name, description, message, photoUrl } }) => (
           
           // we need a key because we only want to render the last post we sent
           <Post 
@@ -97,8 +97,7 @@ function Feed() {
           name={name}
           description={description}
           message={message}
-          photoUrl={photoUrl}
-          />
+          photoUrl={photoUrl}/>
       ))}
     </div>
   )
