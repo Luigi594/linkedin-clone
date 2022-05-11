@@ -8,7 +8,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import CalendarViewDayIcon from '@mui/icons-material/CalendarViewDay';
 import Post from './Post';
 import { db } from "./firebaseConfig";
-import { collection, addDoc, getDocs, serverTimestamp  } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, serverTimestamp, orderBy, query } from 'firebase/firestore';
 
 function Feed() {
 
@@ -23,10 +23,13 @@ function Feed() {
         // to get all the data and set it to the posts hook
         const collectionRef = collection(db, "posts");
 
+        // now, we want that our last post be the first one we see 
+        // so that's why I added the property query and orderBy 
+        const Query = query(collectionRef, orderBy("timestamp", "desc"));
+
         // this is the way I found to read the data from firebase
-        getDocs(collectionRef)
-        .then((snapshot) => {
-            
+        onSnapshot(Query, (snapshot) => {
+
             setPosts(snapshot.docs.map((doc) => (
 
                 {
