@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import "./Login.css";
 import { auth } from "./firebaseConfig";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword } from "firebase/auth"
 import { useDispatch } from 'react-redux';
 import { login } from './features/userSlice';
 
@@ -17,7 +17,21 @@ function Login() {
     // login functionality
     const loginToApp = (e) => {
         
-        e.preventDeafult();
+        e.preventDefault();
+        
+        signInWithEmailAndPassword(auth, email, password)
+        .then((userAuth) => {
+            dispatch(login({
+
+                email: userAuth.user.email,
+                uid: userAuth.user.uid,
+                displayName: userAuth.user.displayName,
+                photoUrl: userAuth.user.photoURL
+            }))
+        })
+        .catch((error) => {
+            console.log(error)
+        })
     }
 
     // register functionality
@@ -27,7 +41,7 @@ function Login() {
             return alert("Please enter a full name");
         }
 
-        // this is how we create an user in firebase V9
+        // this is how we create an user in firebase v9
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
 

@@ -12,6 +12,10 @@
     margin-bottom: 10px;
 }
 
+.post_avatar{
+    object-fit: cover;
+}
+
 .post_info{
     margin-left: 10px;
 }

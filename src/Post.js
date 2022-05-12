@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import "./Post.css";
 import Avatar from '@mui/material/Avatar';
 import InputOption from './InputOption';
@@ -7,11 +7,16 @@ import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 
-function Post({ name, description, message, photoUrl}) {
+// I changed the function as an arrow function, because is more easier
+// to manipulate with the animation I'm gonna be using
+
+// I put the ref parameter and property because it needs to be there
+// I'm saying this component is gonna have the animation
+const Post = forwardRef(({ name, description, message, photoURL}, ref) => {
   return (
-    <div className='post'>
+    <div ref={ref} className='post'>
       <div className="post_header">
-        <Avatar />
+        <Avatar className="post_avatar" src={photoURL}>{name[0]}</Avatar>
 
         <div className="post_info">
             <h2>{name}</h2>
@@ -31,6 +36,6 @@ function Post({ name, description, message, photoUrl}) {
       </div>
     </div>
   )
-}
+})
 
 export default Post
